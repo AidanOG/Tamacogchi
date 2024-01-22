@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dudmhurttd26k"]
+
+[ext_resource type="PackedScene" uid="uid://dbuirkm1lusdc" path="res://Fruit Catch/fruit.tscn" id="1_qo3xe"]
+[ext_resource type="Script" path="res://Fruit Catch/hazard.gd" id="2_esb6j"]
+
+[node name="Hazard" instance=ExtResource("1_qo3xe")]
+script = ExtResource("2_esb6j")
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+self_modulate = Color(1, 0, 0, 1)

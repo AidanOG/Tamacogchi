@@ -1,0 +1,74 @@
+[gd_scene load_steps=7 format=3 uid="uid://neuyy7o3mjl2"]
+
+[ext_resource type="Texture2D" uid="uid://35nys3gwgtqt" path="res://icon.svg" id="1_04lya"]
+[ext_resource type="Script" path="res://Main Room/tama.gd" id="1_hphf4"]
+[ext_resource type="PackedScene" uid="uid://cu2mkbtyl127p" path="res://Main Room/sleep_request.tscn" id="3_v15ii"]
+[ext_resource type="AudioStream" uid="uid://b4tihapuahv50" path="res://Main Room/sound/Tamacogchi Thunk.wav" id="4_1kg2b"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7tccq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_04lya")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hk7p2"]
+size = Vector2(130, 130)
+
+[node name="Tama" type="CharacterBody2D"]
+script = ExtResource("1_hphf4")
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_7tccq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hk7p2")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_hk7p2")
+
+[node name="MeanderTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="IdleTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="PetTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="DizzyTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="SleepRequestTimeoutTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="SleepTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="SleepRequest" parent="." instance=ExtResource("3_v15ii")]
+position = Vector2(0, -150)
+
+[node name="ThunkSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_1kg2b")
+
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]
+[connection signal="timeout" from="MeanderTimer" to="." method="_on_meander_timer_timeout"]
+[connection signal="timeout" from="IdleTimer" to="." method="_on_idle_timer_timeout"]
+[connection signal="timeout" from="PetTimer" to="." method="_on_pet_timer_timeout"]
+[connection signal="timeout" from="DizzyTimer" to="." method="_on_dizzy_timer_timeout"]
+[connection signal="timeout" from="SleepRequestTimeoutTimer" to="." method="_on_sleep_request_timeout_timer_timeout"]
+[connection signal="timeout" from="SleepTimer" to="." method="_on_sleep_timer_timeout"]
+[connection signal="input_event" from="SleepRequest" to="." method="_on_sleep_request_input_event"]

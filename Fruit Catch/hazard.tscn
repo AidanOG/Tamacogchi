@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://0qg2sqqrrvbt"]
+
+[ext_resource type="Script" path="res://Fruit Catch/hazard.gd" id="1_j447j"]
+[ext_resource type="Texture2D" uid="uid://35nys3gwgtqt" path="res://icon.svg" id="2_6qwxy"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xbcrv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_6qwxy")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_i55e1"]
+radius = 32.3883
+
+[node name="Hazard" type="Area2D"]
+collision_mask = 0
+script = ExtResource("1_j447j")
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+self_modulate = Color(1, 0, 0.0156863, 1)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_xbcrv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_i55e1")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]

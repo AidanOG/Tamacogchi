@@ -1,0 +1,68 @@
+[gd_scene load_steps=8 format=3 uid="uid://red71fdrk70w"]
+
+[ext_resource type="PackedScene" uid="uid://dvqccm77k6g7t" path="res://Fruit Catch/fruit_catch_tama.tscn" id="1_k2cud"]
+[ext_resource type="PackedScene" uid="uid://b0pt7ldn1uaqa" path="res://Main Room/floor.tscn" id="1_qn0cq"]
+[ext_resource type="Script" path="res://Fruit Catch/fruit_catch_main.gd" id="1_tpeid"]
+[ext_resource type="PackedScene" uid="uid://dbuirkm1lusdc" path="res://Fruit Catch/fruit.tscn" id="2_i7812"]
+[ext_resource type="PackedScene" uid="uid://b420pw2x7hdsc" path="res://Main Room/wall.tscn" id="2_naqq0"]
+[ext_resource type="PackedScene" uid="uid://b5iy4ivmldhdb" path="res://Fruit Catch/fruit_catch_hud.tscn" id="6_a4rtn"]
+
+[sub_resource type="Curve2D" id="Curve2D_7etg1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 1150, -1)
+}
+point_count = 2
+
+[node name="FruitCatchMain" type="Node"]
+script = ExtResource("1_tpeid")
+fruit_scene = ExtResource("2_i7812")
+
+[node name="FruitCatchTama" parent="." instance=ExtResource("1_k2cud")]
+position = Vector2(576, 400)
+
+[node name="Floor" parent="." instance=ExtResource("1_qn0cq")]
+position = Vector2(576, 713)
+
+[node name="Wall" parent="." instance=ExtResource("2_naqq0")]
+position = Vector2(-65, 324)
+
+[node name="Wall2" parent="." instance=ExtResource("2_naqq0")]
+position = Vector2(1217, 324)
+
+[node name="Button" type="Button" parent="."]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="FruitTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="GameTimer" type="Timer" parent="."]
+wait_time = 30.0
+one_shot = true
+
+[node name="PhaseOneTimer" type="Timer" parent="."]
+wait_time = 15.0
+one_shot = true
+
+[node name="PhaseTwoTimer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+
+[node name="FruitPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_7etg1")
+
+[node name="FruitSpawnLocation" type="PathFollow2D" parent="FruitPath"]
+position = Vector2(0, -2)
+rotation = 0.000869565
+
+[node name="FruitCatchHUD" parent="." instance=ExtResource("6_a4rtn")]
+
+[connection signal="hit" from="FruitCatchTama" to="." method="_on_fruit_catch_tama_hit"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="timeout" from="FruitTimer" to="." method="_on_fruit_timer_timeout"]
+[connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]
+[connection signal="timeout" from="GameTimer" to="FruitCatchTama" method="_on_game_timer_timeout"]
+[connection signal="timeout" from="PhaseOneTimer" to="." method="_on_phase_one_timer_timeout"]
+[connection signal="timeout" from="PhaseTwoTimer" to="." method="_on_phase_two_timer_timeout"]
+[connection signal="start_game" from="FruitCatchHUD" to="." method="_on_fruit_catch_hud_start_game"]
+[connection signal="start_game" from="FruitCatchHUD" to="FruitCatchTama" method="_on_fruit_catch_hud_start_game"]
