@@ -32,6 +32,8 @@ func _ready():
 	main_hud.update_energy(GameManager.energy)
 	happiness_timer.start()
 	energy_timer.start()
+	
+	main_hud.update_food(GameManager.food)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

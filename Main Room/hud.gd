@@ -5,6 +5,7 @@ class_name MainHUD
 @export var message: Label
 @export var happiness_bar: ProgressBar
 @export var energy_bar: ProgressBar
+@export var food_label: Label
 @export var fruit_catch_button: Button
 
 # Called when the node enters the scene tree for the first time.
@@ -20,6 +21,9 @@ func update_happiness(happiness):
 
 func update_energy(energy):
 	energy_bar.value = energy
+	
+func update_food(food):
+	food_label.text = str(food)
 
 func _on_main_happiness_zero():
 	message.show()
@@ -27,4 +31,6 @@ func _on_main_happiness_zero():
 
 func _on_fruit_catch_button_pressed():
 	#get_tree().quit()
-	get_tree().change_scene_to_packed(SceneManager.fruit_catch_scene)
+	if GameManager.energy >= GameManager.energy_to_play_fruit_catch:
+		GameManager.energy -= GameManager.energy_to_play_fruit_catch
+		get_tree().change_scene_to_packed(SceneManager.fruit_catch_scene)

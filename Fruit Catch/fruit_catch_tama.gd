@@ -1,6 +1,5 @@
 extends CharacterBody2D
 
-
 @export var speed = 400.0
 @export var jump_velocity = -600.0
 
@@ -13,7 +12,6 @@ var game_started = false
 
 signal catch
 signal hit
-
 
 func _physics_process(delta):
 	# Add the gravity.
@@ -39,9 +37,8 @@ func _physics_process(delta):
 func _on_area_2d_area_entered(area):
 	if area is Hazard:
 		area.queue_free()
-		#hit.emit()
-		#game_over = true
-		#$CollisionShape2D.set_deferred("disabled", true)
+		hit.emit()
+		game_over = true
 	elif area is Fruit:
 		catch.emit()
 		area.queue_free()

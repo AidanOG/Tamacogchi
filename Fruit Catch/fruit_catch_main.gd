@@ -10,14 +10,19 @@ extends Node
 @export var phase_two_timer: Timer
 @export var fruit_spawn_location: PathFollow2D
 @export var fruit_container: Node2D
+@export var instructions_music: AudioStreamPlayer
+@export var game_music: AudioStreamPlayer
 
 var score
+var final_food_gain
 var game_started = false
 var fruit_probability
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	score = 0
+	final_food_gain = 0
+	instructions_music.play()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -27,6 +32,13 @@ func _process(delta):
 func _on_fruit_catch_tama_hit():
 	fruit_timer.stop()
 	game_timer.stop()
+	for child in fruit_container.get_children():
+		child.queue_free()
+	final_food_gain = ceil(float(score)/20.0)
+	GameManager.food += final_food_gain
+	GameManager.happiness -= GameManager.happiness_loss_lose_fruit_catch
+	game_music.stop()
+	instructions_music.play()
 
 func _on_fruit_timer_timeout():
 	print("here's a fruit")
@@ -47,22 +59,31 @@ func _on_fruit_timer_timeout():
 	fruit_container.add_child(fruit)
 
 func _on_phase_one_timer_timeout():
-	fruit_timer.set_wait_time(0.33)
+	fruit_timer.set_wait_time(0.25)
 	phase_two_timer.start()
+	game_music.pitch_scale = 1.2
 
 func _on_phase_two_timer_timeout():
-	fruit_timer.set_wait_time(0.25)
+	fruit_timer.set_wait_time(0.1)
+	game_music.pitch_scale = 1.5
 
 func _on_game_timer_timeout():
 	for child in fruit_container.get_children():
 		child.queue_free()
 	fruit_timer.stop()
+	final_food_gain = ceil(float(score)/10.0)
+	GameManager.food += final_food_gain
+	GameManager.happiness += GameManager.happiness_gain_win_fruit_catch
+	game_music.stop()
+	instructions_music.play()
 
 func _on_fruit_catch_hud_start_game():
 	fruit_timer.start()
 	game_timer.start()
 	phase_one_timer.start()
 	game_started = true
+	instructions_music.stop()
+	game_music.play()
 
 func _on_fruit_catch_tama_catch():
 	score += 1
