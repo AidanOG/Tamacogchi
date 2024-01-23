@@ -17,9 +17,10 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_i55e1"]
 radius = 32.3883
 
-[node name="Fruit" type="Area2D"]
+[node name="Fruit" type="Area2D" node_paths=PackedStringArray("fruit_sprite")]
 collision_mask = 0
 script = ExtResource("1_k76sn")
+fruit_sprite = NodePath("AnimatedSprite2D")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -31,3 +32,5 @@ sprite_frames = SubResource("SpriteFrames_xbcrv")
 shape = SubResource("CircleShape2D_i55e1")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

@@ -1,9 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5iy4ivmldhdb"]
+[gd_scene load_steps=3 format=3 uid="uid://b5iy4ivmldhdb"]
 
 [ext_resource type="Script" path="res://Fruit Catch/fruit_catch_hud.gd" id="1_u3aji"]
+[ext_resource type="PackedScene" uid="uid://5ao4ydmxh3h3" path="res://Main Room/main.tscn" id="2_fn04n"]
 
-[node name="FruitCatchHUD" type="CanvasLayer"]
+[node name="FruitCatchHUD" type="CanvasLayer" node_paths=PackedStringArray("ready_countdown_label", "time_remaining_label", "score_label", "ready_countdown_timer", "instructions_label", "start_button", "end_label", "return_button")]
 script = ExtResource("1_u3aji")
+ready_countdown_label = NodePath("ReadyCountdownLabel")
+time_remaining_label = NodePath("TimeRemainingLabel")
+score_label = NodePath("ScoreLabel")
+ready_countdown_timer = NodePath("ReadyCountdownTimer")
+instructions_label = NodePath("InstructionsLabel")
+start_button = NodePath("StartButton")
+end_label = NodePath("EndLabel")
+return_button = NodePath("ReturnButton")
+main_scene = ExtResource("2_fn04n")
 
 [node name="InstructionsLabel" type="Label" parent="."]
 anchors_preset = 8
@@ -18,7 +28,7 @@ offset_bottom = 46.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 20
-text = "Guide your Tama around the screen using WASD or the arrow keys to collect as much falling fruit as possible before time is up! Make sure to be on the lookout for falling hazards!
+text = "Guide me around the screen using WASD or the arrow keys to collect as much falling fruit as possible before time is up! Make sure to be on the lookout for falling hazards! Those hurt bad!
 
 Press the \"Start!\" button below when you're ready!"
 horizontal_alignment = 1
@@ -89,5 +99,41 @@ autowrap_mode = 2
 wait_time = 3.0
 one_shot = true
 
+[node name="EndLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -204.0
+offset_right = 300.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "Nice hustle!
+We scored 0 points!
+That earns us 0 food! Bon appétit! Well, for me, anyway."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ReturnButton" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 76.0
+offset_right = 200.0
+offset_bottom = 176.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "Return"
+
 [connection signal="pressed" from="StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="timeout" from="ReadyCountdownTimer" to="." method="_on_ready_countdown_timer_timeout"]
+[connection signal="pressed" from="ReturnButton" to="." method="_on_return_button_pressed"]

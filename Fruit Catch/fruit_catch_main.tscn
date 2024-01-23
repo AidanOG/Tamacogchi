@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://red71fdrk70w"]
+[gd_scene load_steps=9 format=3 uid="uid://red71fdrk70w"]
 
 [ext_resource type="PackedScene" uid="uid://dvqccm77k6g7t" path="res://Fruit Catch/fruit_catch_tama.tscn" id="1_k2cud"]
 [ext_resource type="PackedScene" uid="uid://b0pt7ldn1uaqa" path="res://Main Room/floor.tscn" id="1_qn0cq"]
 [ext_resource type="Script" path="res://Fruit Catch/fruit_catch_main.gd" id="1_tpeid"]
 [ext_resource type="PackedScene" uid="uid://dbuirkm1lusdc" path="res://Fruit Catch/fruit.tscn" id="2_i7812"]
 [ext_resource type="PackedScene" uid="uid://b420pw2x7hdsc" path="res://Main Room/wall.tscn" id="2_naqq0"]
+[ext_resource type="PackedScene" uid="uid://dudmhurttd26k" path="res://Fruit Catch/hazard.tscn" id="3_n8qcv"]
 [ext_resource type="PackedScene" uid="uid://b5iy4ivmldhdb" path="res://Fruit Catch/fruit_catch_hud.tscn" id="6_a4rtn"]
 
 [sub_resource type="Curve2D" id="Curve2D_7etg1"]
@@ -13,25 +14,40 @@ _data = {
 }
 point_count = 2
 
-[node name="FruitCatchMain" type="Node"]
+[node name="FruitCatchMain" type="Node" node_paths=PackedStringArray("fruit_catch_hud", "game_timer", "fruit_timer", "phase_one_timer", "phase_two_timer", "fruit_spawn_location", "fruit_container")]
 script = ExtResource("1_tpeid")
 fruit_scene = ExtResource("2_i7812")
+hazard_scene = ExtResource("3_n8qcv")
+fruit_catch_hud = NodePath("FruitCatchHUD")
+game_timer = NodePath("GameTimer")
+fruit_timer = NodePath("FruitTimer")
+phase_one_timer = NodePath("PhaseOneTimer")
+phase_two_timer = NodePath("PhaseTwoTimer")
+fruit_spawn_location = NodePath("PlayArea/FruitPath/FruitSpawnLocation")
+fruit_container = NodePath("PlayArea/FruitContainer")
 
-[node name="FruitCatchTama" parent="." instance=ExtResource("1_k2cud")]
+[node name="PlayArea" type="Node2D" parent="."]
+
+[node name="FruitCatchTama" parent="PlayArea" instance=ExtResource("1_k2cud")]
 position = Vector2(576, 400)
 
-[node name="Floor" parent="." instance=ExtResource("1_qn0cq")]
+[node name="Floor" parent="PlayArea" instance=ExtResource("1_qn0cq")]
 position = Vector2(576, 713)
 
-[node name="Wall" parent="." instance=ExtResource("2_naqq0")]
+[node name="Wall" parent="PlayArea" instance=ExtResource("2_naqq0")]
 position = Vector2(-65, 324)
 
-[node name="Wall2" parent="." instance=ExtResource("2_naqq0")]
+[node name="Wall2" parent="PlayArea" instance=ExtResource("2_naqq0")]
 position = Vector2(1217, 324)
 
-[node name="Button" type="Button" parent="."]
-offset_right = 8.0
-offset_bottom = 8.0
+[node name="FruitPath" type="Path2D" parent="PlayArea"]
+curve = SubResource("Curve2D_7etg1")
+
+[node name="FruitSpawnLocation" type="PathFollow2D" parent="PlayArea/FruitPath"]
+position = Vector2(0, -2)
+rotation = 0.000869565
+
+[node name="FruitContainer" type="Node2D" parent="PlayArea"]
 
 [node name="FruitTimer" type="Timer" parent="."]
 wait_time = 0.5
@@ -48,21 +64,15 @@ one_shot = true
 wait_time = 10.0
 one_shot = true
 
-[node name="FruitPath" type="Path2D" parent="."]
-curve = SubResource("Curve2D_7etg1")
-
-[node name="FruitSpawnLocation" type="PathFollow2D" parent="FruitPath"]
-position = Vector2(0, -2)
-rotation = 0.000869565
-
 [node name="FruitCatchHUD" parent="." instance=ExtResource("6_a4rtn")]
 
-[connection signal="hit" from="FruitCatchTama" to="." method="_on_fruit_catch_tama_hit"]
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="catch" from="PlayArea/FruitCatchTama" to="." method="_on_fruit_catch_tama_catch"]
+[connection signal="hit" from="PlayArea/FruitCatchTama" to="." method="_on_fruit_catch_tama_hit"]
 [connection signal="timeout" from="FruitTimer" to="." method="_on_fruit_timer_timeout"]
 [connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]
-[connection signal="timeout" from="GameTimer" to="FruitCatchTama" method="_on_game_timer_timeout"]
+[connection signal="timeout" from="GameTimer" to="PlayArea/FruitCatchTama" method="_on_game_timer_timeout"]
+[connection signal="timeout" from="GameTimer" to="FruitCatchHUD" method="_on_game_timer_timeout"]
 [connection signal="timeout" from="PhaseOneTimer" to="." method="_on_phase_one_timer_timeout"]
 [connection signal="timeout" from="PhaseTwoTimer" to="." method="_on_phase_two_timer_timeout"]
 [connection signal="start_game" from="FruitCatchHUD" to="." method="_on_fruit_catch_hud_start_game"]
-[connection signal="start_game" from="FruitCatchHUD" to="FruitCatchTama" method="_on_fruit_catch_hud_start_game"]
+[connection signal="start_game" from="FruitCatchHUD" to="PlayArea/FruitCatchTama" method="_on_fruit_catch_hud_start_game"]

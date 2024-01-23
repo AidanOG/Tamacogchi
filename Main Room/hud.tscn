@@ -2,8 +2,12 @@
 
 [ext_resource type="Script" path="res://Main Room/hud.gd" id="1_lrkut"]
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("message", "happiness_bar", "energy_bar", "fruit_catch_button")]
 script = ExtResource("1_lrkut")
+message = NodePath("Message")
+happiness_bar = NodePath("HappinessBar")
+energy_bar = NodePath("EnergyBar")
+fruit_catch_button = NodePath("FruitCatchButton")
 
 [node name="HappinessBar" type="ProgressBar" parent="."]
 offset_right = 382.0

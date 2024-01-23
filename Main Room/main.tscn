@@ -6,8 +6,12 @@
 [ext_resource type="PackedScene" uid="uid://b420pw2x7hdsc" path="res://Main Room/wall.tscn" id="3_2cpac"]
 [ext_resource type="PackedScene" uid="uid://dvvvgs86m0n5g" path="res://Main Room/hud.tscn" id="5_mfggl"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "happiness_timer", "energy_timer", "sleep_request_downtime")]
 script = ExtResource("1_64npm")
+main_hud = NodePath("HUD")
+happiness_timer = NodePath("HappinessTimer")
+energy_timer = NodePath("EnergyTimer")
+sleep_request_downtime = NodePath("SleepRequestDowntime")
 
 [node name="Tama" parent="." instance=ExtResource("1_ne2um")]
 position = Vector2(576, 400)
@@ -30,6 +34,10 @@ wait_time = 20.0
 one_shot = true
 
 [node name="HUD" parent="." instance=ExtResource("5_mfggl")]
+message = null
+happiness_bar = null
+energy_bar = null
+fruit_catch_button = null
 
 [connection signal="energy_low" from="." to="Tama" method="_on_main_energy_low"]
 [connection signal="happiness_zero" from="." to="Tama" method="_on_main_happiness_zero"]

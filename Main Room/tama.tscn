@@ -19,8 +19,16 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hk7p2"]
 size = Vector2(130, 130)
 
-[node name="Tama" type="CharacterBody2D"]
+[node name="Tama" type="CharacterBody2D" node_paths=PackedStringArray("idle_timer", "meander_timer", "pet_timer", "dizzy_timer", "sleep_timer", "sleep_request_timeout_timer", "sleep_request", "thunk_sound")]
 script = ExtResource("1_hphf4")
+idle_timer = NodePath("IdleTimer")
+meander_timer = NodePath("MeanderTimer")
+pet_timer = NodePath("PetTimer")
+dizzy_timer = NodePath("DizzyTimer")
+sleep_timer = NodePath("SleepTimer")
+sleep_request_timeout_timer = NodePath("SleepRequestTimeoutTimer")
+sleep_request = NodePath("SleepRequest")
+thunk_sound = NodePath("ThunkSound")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

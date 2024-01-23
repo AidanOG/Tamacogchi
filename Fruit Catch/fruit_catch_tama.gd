@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 
-@export var speed = 300.0
+@export var speed = 400.0
 @export var jump_velocity = -600.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -37,13 +37,14 @@ func _physics_process(delta):
 	move_and_slide()
 
 func _on_area_2d_area_entered(area):
-	catch.emit()
-	print(area.name)
-	if area is Fruit:
-		print("this is fruit")
-	#hit.emit()
-	#game_over = true
-	#$CollisionShape2D.set_deferred("disabled", true)
+	if area is Hazard:
+		area.queue_free()
+		#hit.emit()
+		#game_over = true
+		#$CollisionShape2D.set_deferred("disabled", true)
+	elif area is Fruit:
+		catch.emit()
+		area.queue_free()
 
 func _on_game_timer_timeout():
 	game_complete = true

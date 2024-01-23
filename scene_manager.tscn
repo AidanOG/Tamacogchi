@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6on2r5kcpp1j"]
+
+[ext_resource type="Script" path="res://scene_manager.gd" id="1_wtmr1"]
+[ext_resource type="PackedScene" uid="uid://5ao4ydmxh3h3" path="res://Main Room/main.tscn" id="2_twdgy"]
+[ext_resource type="PackedScene" uid="uid://red71fdrk70w" path="res://Fruit Catch/fruit_catch_main.tscn" id="3_uko01"]
+
+[node name="SceneManager" type="Node"]
+script = ExtResource("1_wtmr1")
+main_scene = ExtResource("2_twdgy")
+fruit_catch_scene = ExtResource("3_uko01")
