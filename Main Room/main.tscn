@@ -34,10 +34,6 @@ wait_time = 20.0
 one_shot = true
 
 [node name="HUD" parent="." instance=ExtResource("5_mfggl")]
-message = null
-happiness_bar = null
-energy_bar = null
-fruit_catch_button = null
 
 [connection signal="energy_low" from="." to="Tama" method="_on_main_energy_low"]
 [connection signal="happiness_zero" from="." to="Tama" method="_on_main_happiness_zero"]

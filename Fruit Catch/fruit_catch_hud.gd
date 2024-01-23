@@ -55,4 +55,4 @@ func _on_game_timer_timeout():
 	return_button.show()
 
 func _on_return_button_pressed():
-	get_tree().change_scene_packed(SceneManager.main_scene)
+	get_tree().change_scene_to_packed(SceneManager.main_scene)
