@@ -18,6 +18,7 @@ var game_over = false
 @export var dizzy_timer: Timer
 @export var sleep_timer: Timer
 @export var sleep_request_timeout_timer: Timer
+@export var eat_timer: Timer
 @export var sleep_request: Area2D
 @export var thunk_sound: AudioStreamPlayer
 
@@ -25,6 +26,7 @@ signal successful_pet
 signal dropped
 signal sleep_request_missed
 signal sleep_finished
+signal eat_finished
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -105,7 +107,7 @@ func _on_idle_timer_timeout():
 	print("MeanderTimer Started")
 
 func _on_area_2d_mouse_entered():
-	if grabbed == false && is_on_floor() && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0:
+	if grabbed == false && is_on_floor() && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0:
 		idle_timer.stop()
 		meander_timer.stop()
 		pet_timer.start()
@@ -125,12 +127,12 @@ func _on_pet_timer_timeout():
 	successful_pet.emit()
 	
 func _on_dizzy_timer_timeout():
-	print("Fucker :(")
+	print(":(")
 	idle_timer.start()
 	print("IdleTimer Started 6")
 	
 func _on_area_2d_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton && event.pressed && sleep_timer.get_time_left() == 0 && game_over == false:
+	if event is InputEventMouseButton && event.pressed && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && game_over == false:
 		#print("You just grabbed me!")
 		grabbed = true
 		falling = false
@@ -157,7 +159,7 @@ func _on_main_energy_low():
 	sleep_request_timeout_timer.start()
 
 func _on_sleep_request_input_event(viewport, event, shape_idx):
-	if requesting_sleep == true && dizzy_timer.get_time_left() == 0 && event is InputEventMouseButton && event.pressed && game_over == false:
+	if requesting_sleep == true && dizzy_timer.get_time_left() == 0 && event is InputEventMouseButton && event.pressed && game_over == false && eat_timer.get_time_left() == 0:
 		sleep_request_timeout_timer.stop()
 		sleep_timer.start()
 		sleep_request.hide()
@@ -178,3 +180,15 @@ func _on_sleep_timer_timeout():
 	idle_timer.start()
 	print("IdleTimer Started 9")
 	sleep_finished.emit()
+
+func _on_hud_feed():
+	if(GameManager.food) >= 1 && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && game_over == false:
+		idle_timer.stop()
+		meander_timer.stop()
+		eat_timer.start()
+		print("nom nom nom")
+
+func _on_eat_timer_timeout():
+	idle_timer.start()
+	eat_finished.emit()
+	print("yum")

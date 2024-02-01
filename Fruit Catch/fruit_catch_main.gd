@@ -3,6 +3,7 @@ extends Node
 @export_group("Dependencies")
 @export var fruit_scene: PackedScene
 @export var hazard_scene: PackedScene
+@export var super_fruit_scene: PackedScene
 @export var fruit_catch_hud: FruitCatchHUD
 @export var game_timer: Timer
 @export var fruit_timer: Timer
@@ -34,20 +35,43 @@ func _on_fruit_catch_tama_hit():
 	game_timer.stop()
 	for child in fruit_container.get_children():
 		child.queue_free()
+	game_music.stop()
+	await get_tree().create_timer(1.0).timeout
 	final_food_gain = ceil(float(score)/20.0)
 	GameManager.food += final_food_gain
 	GameManager.happiness -= GameManager.happiness_loss_lose_fruit_catch
-	game_music.stop()
+	if GameManager.happiness < 0:
+		GameManager.happiness = 0
 	instructions_music.play()
 
 func _on_fruit_timer_timeout():
-	print("here's a fruit")
 	var fruit
 	fruit_probability = randf_range(0, 1.0)
-	if fruit_probability <= 0.8: 
-		fruit = fruit_scene.instantiate()
+	
+	if phase_one_timer.get_time_left() != 0:
+		print("phase 1 fruit!")
+		if fruit_probability <= 0.8: 
+			fruit = fruit_scene.instantiate()
+		else:
+			fruit = hazard_scene.instantiate()
+	elif phase_two_timer.get_time_left() != 0:
+		print("phase 2 fruit!")
+		if fruit_probability <= 0.75:
+			fruit = fruit_scene.instantiate()
+		elif fruit_probability <= 0.8:
+			fruit = super_fruit_scene.instantiate()
+			print("super!")
+		else:
+			fruit = hazard_scene.instantiate()
 	else:
-		fruit = hazard_scene.instantiate()
+		print("phase 3 fruit!")
+		if fruit_probability <= 0.5:
+			fruit = fruit_scene.instantiate()
+		elif fruit_probability <= 0.8:
+			fruit = super_fruit_scene.instantiate()
+			print("super!")
+		else:
+			fruit = hazard_scene.instantiate()
 
 	# Choose a random location on Path2D.
 	fruit_spawn_location.progress_ratio = randf()
@@ -71,10 +95,13 @@ func _on_game_timer_timeout():
 	for child in fruit_container.get_children():
 		child.queue_free()
 	fruit_timer.stop()
+	game_music.stop()
+	await get_tree().create_timer(1.0).timeout
 	final_food_gain = ceil(float(score)/10.0)
 	GameManager.food += final_food_gain
 	GameManager.happiness += GameManager.happiness_gain_win_fruit_catch
-	game_music.stop()
+	if GameManager.happiness > 100:
+		GameManager.happiness = 100
 	instructions_music.play()
 
 func _on_fruit_catch_hud_start_game():
@@ -87,4 +114,9 @@ func _on_fruit_catch_hud_start_game():
 
 func _on_fruit_catch_tama_catch():
 	score += 1
+	fruit_catch_hud.update_score(score)
+
+func _on_fruit_catch_tama_super_catch():
+	print("YAAAAAAAAAAAAAY")
+	score += 3
 	fruit_catch_hud.update_score(score)

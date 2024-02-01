@@ -6,12 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://b420pw2x7hdsc" path="res://Main Room/wall.tscn" id="3_2cpac"]
 [ext_resource type="PackedScene" uid="uid://dvvvgs86m0n5g" path="res://Main Room/hud.tscn" id="5_mfggl"]
 
-[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "happiness_timer", "energy_timer", "sleep_request_downtime")]
+[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "happiness_timer", "energy_timer", "sleep_request_downtime", "hunger_timer")]
 script = ExtResource("1_64npm")
 main_hud = NodePath("HUD")
 happiness_timer = NodePath("HappinessTimer")
 energy_timer = NodePath("EnergyTimer")
 sleep_request_downtime = NodePath("SleepRequestDowntime")
+hunger_timer = NodePath("HungerTimer")
 
 [node name="Tama" parent="." instance=ExtResource("1_ne2um")]
 position = Vector2(576, 400)
@@ -29,6 +30,8 @@ position = Vector2(1217, 324)
 
 [node name="EnergyTimer" type="Timer" parent="."]
 
+[node name="HungerTimer" type="Timer" parent="."]
+
 [node name="SleepRequestDowntime" type="Timer" parent="."]
 wait_time = 20.0
 one_shot = true
@@ -39,8 +42,11 @@ one_shot = true
 [connection signal="happiness_zero" from="." to="Tama" method="_on_main_happiness_zero"]
 [connection signal="happiness_zero" from="." to="HUD" method="_on_main_happiness_zero"]
 [connection signal="dropped" from="Tama" to="." method="_on_tama_dropped"]
+[connection signal="eat_finished" from="Tama" to="." method="_on_tama_eat_finished"]
 [connection signal="sleep_finished" from="Tama" to="." method="_on_tama_sleep_finished"]
 [connection signal="sleep_request_missed" from="Tama" to="." method="_on_tama_sleep_request_missed"]
 [connection signal="successful_pet" from="Tama" to="." method="_on_tama_successful_pet"]
 [connection signal="timeout" from="HappinessTimer" to="." method="_on_happiness_timer_timeout"]
 [connection signal="timeout" from="EnergyTimer" to="." method="_on_energy_timer_timeout"]
+[connection signal="timeout" from="HungerTimer" to="." method="_on_hunger_timer_timeout"]
+[connection signal="feed" from="HUD" to="Tama" method="_on_hud_feed"]

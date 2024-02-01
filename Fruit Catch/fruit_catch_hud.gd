@@ -51,6 +51,7 @@ func update_score(score):
 	score_display = score
 
 func _on_game_timer_timeout():
+	await get_tree().create_timer(1.0).timeout
 	end_label.text = "Nice hustle! \nWe scored %d points! \nThat earns us %d food! Bon appétit! Well, for me, anyway." % [score_display, ceil(float(score_display)/10.0)]
 	end_label.show()
 	return_button.show()
@@ -59,6 +60,7 @@ func _on_return_button_pressed():
 	get_tree().change_scene_to_packed(SceneManager.main_scene)
 
 func _on_fruit_catch_tama_hit():
+	await get_tree().create_timer(1.0).timeout
 	game_over_label.text = "Ouch... \nW-We scored %d points... \nBut I dropped some, so we only get %d food... \nCould've been worse, right?" % [score_display, ceil(float(score_display)/20.0)]
 	game_over_label.show()
 	return_button.show()

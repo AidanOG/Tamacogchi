@@ -10,6 +10,7 @@ var game_over = false
 var game_complete = false
 var game_started = false
 
+signal super_catch
 signal catch
 signal hit
 
@@ -39,9 +40,13 @@ func _on_area_2d_area_entered(area):
 		area.queue_free()
 		hit.emit()
 		game_over = true
+	elif area is SuperFruit:
+		super_catch.emit()
+		area.queue_free()
 	elif area is Fruit:
 		catch.emit()
 		area.queue_free()
+
 
 func _on_game_timer_timeout():
 	game_complete = true

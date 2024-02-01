@@ -19,7 +19,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hk7p2"]
 size = Vector2(130, 130)
 
-[node name="Tama" type="CharacterBody2D" node_paths=PackedStringArray("idle_timer", "meander_timer", "pet_timer", "dizzy_timer", "sleep_timer", "sleep_request_timeout_timer", "sleep_request", "thunk_sound")]
+[node name="Tama" type="CharacterBody2D" node_paths=PackedStringArray("idle_timer", "meander_timer", "pet_timer", "dizzy_timer", "sleep_timer", "sleep_request_timeout_timer", "eat_timer", "sleep_request", "thunk_sound")]
 script = ExtResource("1_hphf4")
 idle_timer = NodePath("IdleTimer")
 meander_timer = NodePath("MeanderTimer")
@@ -27,6 +27,7 @@ pet_timer = NodePath("PetTimer")
 dizzy_timer = NodePath("DizzyTimer")
 sleep_timer = NodePath("SleepTimer")
 sleep_request_timeout_timer = NodePath("SleepRequestTimeoutTimer")
+eat_timer = NodePath("EatTimer")
 sleep_request = NodePath("SleepRequest")
 thunk_sound = NodePath("ThunkSound")
 metadata/_edit_group_ = true
@@ -64,6 +65,10 @@ one_shot = true
 wait_time = 5.0
 one_shot = true
 
+[node name="EatTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
 [node name="SleepRequest" parent="." instance=ExtResource("3_v15ii")]
 position = Vector2(0, -150)
 
@@ -79,4 +84,5 @@ stream = ExtResource("4_1kg2b")
 [connection signal="timeout" from="DizzyTimer" to="." method="_on_dizzy_timer_timeout"]
 [connection signal="timeout" from="SleepRequestTimeoutTimer" to="." method="_on_sleep_request_timeout_timer_timeout"]
 [connection signal="timeout" from="SleepTimer" to="." method="_on_sleep_timer_timeout"]
+[connection signal="timeout" from="EatTimer" to="." method="_on_eat_timer_timeout"]
 [connection signal="input_event" from="SleepRequest" to="." method="_on_sleep_request_input_event"]
