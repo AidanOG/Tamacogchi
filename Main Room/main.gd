@@ -3,10 +3,13 @@ extends Node
 #var happiness
 #@export var happiness_start = 80.0
 @export var happiness_loss_time = 1.0
-@export var happiness_gain_pet = 50.0
+@export var happiness_gain_pet = 25.0
 @export var happiness_loss_drop = 20.0
 @export var happiness_gain_sleep = 10.0
 @export var happiness_loss_sleep_missed = 10.0
+@export var happiness_gain_treatment = 10.0
+
+@export var happiness_loss_while_ill = 7.0
 
 #var energy
 #@export var energy_start = 80.0
@@ -14,9 +17,14 @@ extends Node
 @export var energy_loss_time = 0.5
 var next_low_energy
 var low_energy_signal_emitted = false
+var ill_signal_emitted = false
 
 @export var hunger_loss_time = 1.0
 @export var hunger_gain_feed = 30.0
+
+@export var wellness_gain_time = 1.0
+@export var wellness_loss_overfeed = 50.0
+
 
 @export_group("Dependencies")
 @export var main_hud: MainHUD
@@ -24,9 +32,12 @@ var low_energy_signal_emitted = false
 @export var energy_timer: Timer
 @export var sleep_request_downtime: Timer
 @export var hunger_timer: Timer
+@export var wellness_timer: Timer
+@export var happiness_ill_timer: Timer
 
 signal happiness_zero
 signal energy_low
+signal ill
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -38,9 +49,11 @@ func _ready():
 	happiness_timer.start()
 	energy_timer.start()
 	hunger_timer.start()
+	wellness_timer.start()
 	
 	main_hud.update_food(GameManager.food)
 	main_hud.update_hunger(GameManager.hunger)
+	main_hud.update_wellness(GameManager.wellness)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -48,11 +61,18 @@ func _process(delta):
 		happiness_timer.stop()
 		energy_timer.stop()
 		hunger_timer.stop()
+		wellness_timer.start()
 		happiness_zero.emit()
 	if GameManager.energy <= next_low_energy && sleep_request_downtime.get_time_left() == 0 && GameManager.happiness > 0 && low_energy_signal_emitted == false:
 		print("My energy low!")
 		low_energy_signal_emitted = true
 		energy_low.emit()
+	if GameManager.wellness <= 0 && ill_signal_emitted == false:
+		wellness_timer.stop()
+		ill_signal_emitted = true
+		ill.emit()
+		happiness_ill_timer.start()
+		
 	
 	energy_loss_time = base_energy_loss_time + (base_energy_loss_time * (((100.0 - GameManager.energy) / 10.0) + 0))
 	# print(energy_loss_time)
@@ -111,5 +131,32 @@ func _on_tama_eat_finished():
 	main_hud.update_food(GameManager.food)
 	GameManager.hunger += hunger_gain_feed
 	if GameManager.hunger > 100:
+		GameManager.wellness -= wellness_loss_overfeed
+		if GameManager.wellness < 0:
+			GameManager.wellness = 0
+		main_hud.update_wellness(GameManager.wellness)
 		GameManager.hunger = 100
 	main_hud.update_hunger(GameManager.hunger)
+
+func _on_wellness_timer_timeout():
+	GameManager.wellness+=wellness_gain_time
+	if GameManager.wellness > 100:
+		GameManager.wellness = 100
+	main_hud.update_wellness(GameManager.wellness)
+
+func _on_tama_ill_treatment_finished():
+	GameManager.wellness = 100
+	main_hud.update_wellness(GameManager.wellness)
+	GameManager.happiness+=happiness_gain_treatment
+	if GameManager.happiness >= 100:
+		GameManager.happiness = 100
+	main_hud.update_happiness(GameManager.happiness)
+	ill_signal_emitted = false
+	happiness_ill_timer.stop()
+	wellness_timer.start()
+
+func _on_happiness_ill_timer_timeout():
+	GameManager.happiness-=happiness_loss_while_ill
+	if GameManager.happiness < 0:
+		GameManager.happiness = 0
+	main_hud.update_happiness(GameManager.happiness)

@@ -15,6 +15,9 @@ var food
 var hunger
 @export var hunger_start = 100.0
 
+var wellness
+@export var wellness_start = 75.0
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,6 +25,7 @@ func _ready():
 	energy = energy_start
 	food = food_start
 	hunger = hunger_start
+	wellness = wellness_start
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

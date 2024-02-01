@@ -7,11 +7,13 @@ class_name MainHUD
 @export var happiness_bar: ProgressBar
 @export var energy_bar: ProgressBar
 @export var hunger_bar: ProgressBar
+@export var wellness_bar: ProgressBar
 
 @export var food_label: Label
 
 @export var fruit_catch_button: Button
 @export var feed_button: Button
+
 
 signal feed
 
@@ -35,13 +37,17 @@ func update_food(food):
 func update_hunger(hunger):
 	hunger_bar.value = hunger
 
+func update_wellness(wellness):
+	wellness_bar.value = wellness
+
 func _on_main_happiness_zero():
 	message.show()
 	fruit_catch_button.hide()
+	
 
 func _on_fruit_catch_button_pressed():
 	#get_tree().quit()
-	if GameManager.energy >= GameManager.energy_to_play_fruit_catch:
+	if GameManager.energy >= GameManager.energy_to_play_fruit_catch && GameManager.wellness > 0:
 		GameManager.energy -= GameManager.energy_to_play_fruit_catch
 		get_tree().change_scene_to_packed(SceneManager.fruit_catch_scene)
 

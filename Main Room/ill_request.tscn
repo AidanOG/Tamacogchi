@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8p7101s6233l"]
+
+[ext_resource type="Texture2D" uid="uid://35nys3gwgtqt" path="res://icon.svg" id="1_se4ym"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j57l7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_se4ym")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u40iu"]
+size = Vector2(64, 64)
+
+[node name="SleepRequest" type="Area2D"]
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+modulate = Color(0.529412, 0.290196, 0.117647, 1)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_j57l7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_u40iu")

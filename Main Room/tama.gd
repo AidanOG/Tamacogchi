@@ -8,6 +8,7 @@ var grabbed
 var falling
 var falling_fast
 var requesting_sleep
+var requesting_ill
 var screen_size
 var game_over = false
 
@@ -19,7 +20,11 @@ var game_over = false
 @export var sleep_timer: Timer
 @export var sleep_request_timeout_timer: Timer
 @export var eat_timer: Timer
+@export var ill_treatment_timer: Timer
+
 @export var sleep_request: Area2D
+@export var ill_request: Area2D
+
 @export var thunk_sound: AudioStreamPlayer
 
 signal successful_pet
@@ -27,6 +32,7 @@ signal dropped
 signal sleep_request_missed
 signal sleep_finished
 signal eat_finished
+signal ill_treatment_finished
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -37,7 +43,9 @@ func _ready():
 	falling = false
 	falling_fast = false
 	requesting_sleep = false
+	requesting_ill = false
 	sleep_request.hide()
+	ill_request.hide()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -107,7 +115,7 @@ func _on_idle_timer_timeout():
 	print("MeanderTimer Started")
 
 func _on_area_2d_mouse_entered():
-	if grabbed == false && is_on_floor() && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0:
+	if grabbed == false && is_on_floor() && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && ill_treatment_timer.get_time_left() == 0:
 		idle_timer.stop()
 		meander_timer.stop()
 		pet_timer.start()
@@ -132,7 +140,7 @@ func _on_dizzy_timer_timeout():
 	print("IdleTimer Started 6")
 	
 func _on_area_2d_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton && event.pressed && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && game_over == false:
+	if event is InputEventMouseButton && event.pressed && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && game_over == false && ill_treatment_timer.get_time_left() == 0:
 		#print("You just grabbed me!")
 		grabbed = true
 		falling = false
@@ -149,17 +157,19 @@ func _on_main_happiness_zero():
 	meander_timer.stop()
 	dizzy_timer.stop()
 	sleep_timer.stop()
+	ill_treatment_timer.stop()
 	game_over = true
 
 func _on_main_energy_low():
 	idle_timer.stop()
 	meander_timer.stop()
 	requesting_sleep = true
-	sleep_request.show()
+	if requesting_ill == false:
+		sleep_request.show()
 	sleep_request_timeout_timer.start()
 
 func _on_sleep_request_input_event(viewport, event, shape_idx):
-	if requesting_sleep == true && dizzy_timer.get_time_left() == 0 && event is InputEventMouseButton && event.pressed && game_over == false && eat_timer.get_time_left() == 0:
+	if requesting_sleep == true && dizzy_timer.get_time_left() == 0 && event is InputEventMouseButton && event.pressed && game_over == false && eat_timer.get_time_left() == 0 && ill_treatment_timer.get_time_left() == 0 && requesting_ill == false:
 		sleep_request_timeout_timer.stop()
 		sleep_timer.start()
 		sleep_request.hide()
@@ -170,10 +180,12 @@ func _on_sleep_request_input_event(viewport, event, shape_idx):
 
 func _on_sleep_request_timeout_timer_timeout():
 	sleep_request_missed.emit()
+	print("missed sleep")
 	requesting_sleep = false
 	sleep_request.hide()
-	idle_timer.start()
-	print("IdleTimer Started 8")
+	if requesting_ill == false && ill_treatment_timer.get_time_left() == 0:
+		idle_timer.start()
+		print("IdleTimer Started 8")
 
 func _on_sleep_timer_timeout():
 	requesting_sleep = false
@@ -182,7 +194,7 @@ func _on_sleep_timer_timeout():
 	sleep_finished.emit()
 
 func _on_hud_feed():
-	if(GameManager.food) >= 1 && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && game_over == false:
+	if GameManager.food >= 1 && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && game_over == false && ill_treatment_timer.get_time_left() == 0 && requesting_ill == false:
 		idle_timer.stop()
 		meander_timer.stop()
 		eat_timer.start()
@@ -192,3 +204,31 @@ func _on_eat_timer_timeout():
 	idle_timer.start()
 	eat_finished.emit()
 	print("yum")
+
+
+func _on_main_ill():
+	idle_timer.stop()
+	meander_timer.stop()
+	requesting_ill = true
+	ill_request.show()
+	sleep_request.hide()
+	print("main ill")
+
+
+func _on_illness_request_input_event(viewport, event, shape_idx):
+	if requesting_ill == true && dizzy_timer.get_time_left() == 0 && event is InputEventMouseButton && event.pressed && game_over == false && eat_timer.get_time_left() == 0 && ill_treatment_timer.get_time_left() == 0:
+		ill_treatment_timer.start()
+		ill_request.hide()
+		idle_timer.stop()
+		meander_timer.stop()
+		print("healing...")
+
+
+func _on_ill_treatment_timer_timeout():
+	requesting_ill = false
+	if requesting_sleep == true:
+		sleep_request.show()
+	else:
+		idle_timer.start()
+	ill_treatment_finished.emit()
+	print("thank you for super speed healing me")

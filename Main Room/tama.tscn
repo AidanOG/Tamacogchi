@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://neuyy7o3mjl2"]
+[gd_scene load_steps=8 format=3 uid="uid://neuyy7o3mjl2"]
 
 [ext_resource type="Texture2D" uid="uid://35nys3gwgtqt" path="res://icon.svg" id="1_04lya"]
 [ext_resource type="Script" path="res://Main Room/tama.gd" id="1_hphf4"]
 [ext_resource type="PackedScene" uid="uid://cu2mkbtyl127p" path="res://Main Room/sleep_request.tscn" id="3_v15ii"]
 [ext_resource type="AudioStream" uid="uid://b4tihapuahv50" path="res://Main Room/sound/Tamacogchi Thunk.wav" id="4_1kg2b"]
+[ext_resource type="PackedScene" uid="uid://c8p7101s6233l" path="res://Main Room/ill_request.tscn" id="4_xtsfi"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7tccq"]
 animations = [{
@@ -19,7 +20,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hk7p2"]
 size = Vector2(130, 130)
 
-[node name="Tama" type="CharacterBody2D" node_paths=PackedStringArray("idle_timer", "meander_timer", "pet_timer", "dizzy_timer", "sleep_timer", "sleep_request_timeout_timer", "eat_timer", "sleep_request", "thunk_sound")]
+[node name="Tama" type="CharacterBody2D" node_paths=PackedStringArray("idle_timer", "meander_timer", "pet_timer", "dizzy_timer", "sleep_timer", "sleep_request_timeout_timer", "eat_timer", "ill_treatment_timer", "sleep_request", "ill_request", "thunk_sound")]
 script = ExtResource("1_hphf4")
 idle_timer = NodePath("IdleTimer")
 meander_timer = NodePath("MeanderTimer")
@@ -28,7 +29,9 @@ dizzy_timer = NodePath("DizzyTimer")
 sleep_timer = NodePath("SleepTimer")
 sleep_request_timeout_timer = NodePath("SleepRequestTimeoutTimer")
 eat_timer = NodePath("EatTimer")
+ill_treatment_timer = NodePath("IllTreatmentTimer")
 sleep_request = NodePath("SleepRequest")
+ill_request = NodePath("IllnessRequest")
 thunk_sound = NodePath("ThunkSound")
 metadata/_edit_group_ = true
 
@@ -69,7 +72,14 @@ one_shot = true
 wait_time = 2.0
 one_shot = true
 
+[node name="IllTreatmentTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
 [node name="SleepRequest" parent="." instance=ExtResource("3_v15ii")]
+position = Vector2(0, -150)
+
+[node name="IllnessRequest" parent="." instance=ExtResource("4_xtsfi")]
 position = Vector2(0, -150)
 
 [node name="ThunkSound" type="AudioStreamPlayer" parent="."]
@@ -85,4 +95,6 @@ stream = ExtResource("4_1kg2b")
 [connection signal="timeout" from="SleepRequestTimeoutTimer" to="." method="_on_sleep_request_timeout_timer_timeout"]
 [connection signal="timeout" from="SleepTimer" to="." method="_on_sleep_timer_timeout"]
 [connection signal="timeout" from="EatTimer" to="." method="_on_eat_timer_timeout"]
+[connection signal="timeout" from="IllTreatmentTimer" to="." method="_on_ill_treatment_timer_timeout"]
 [connection signal="input_event" from="SleepRequest" to="." method="_on_sleep_request_input_event"]
+[connection signal="input_event" from="IllnessRequest" to="." method="_on_illness_request_input_event"]
