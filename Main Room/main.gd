@@ -28,12 +28,16 @@ var ill_signal_emitted = false
 
 @export_group("Dependencies")
 @export var main_hud: MainHUD
+@export var play_area: Node2D
+@export var tama: Tama
+@export var poop_scene: PackedScene
 @export var happiness_timer: Timer
 @export var energy_timer: Timer
 @export var sleep_request_downtime: Timer
 @export var hunger_timer: Timer
 @export var wellness_timer: Timer
 @export var happiness_ill_timer: Timer
+@export var poop_timer: Timer
 
 signal happiness_zero
 signal energy_low
@@ -51,6 +55,9 @@ func _ready():
 	hunger_timer.start()
 	wellness_timer.start()
 	
+	poop_timer.set_wait_time(randi_range(1, 2))
+	poop_timer.start()
+	
 	main_hud.update_food(GameManager.food)
 	main_hud.update_hunger(GameManager.hunger)
 	main_hud.update_wellness(GameManager.wellness)
@@ -61,8 +68,10 @@ func _process(delta):
 		happiness_timer.stop()
 		energy_timer.stop()
 		hunger_timer.stop()
-		wellness_timer.start()
+		wellness_timer.stop()
+		poop_timer.stop()
 		happiness_zero.emit()
+		GameManager.game_over = true
 	if GameManager.energy <= next_low_energy && sleep_request_downtime.get_time_left() == 0 && GameManager.happiness > 0 && low_energy_signal_emitted == false:
 		print("My energy low!")
 		low_energy_signal_emitted = true
@@ -139,9 +148,14 @@ func _on_tama_eat_finished():
 	main_hud.update_hunger(GameManager.hunger)
 
 func _on_wellness_timer_timeout():
-	GameManager.wellness+=wellness_gain_time
-	if GameManager.wellness > 100:
-		GameManager.wellness = 100
+	if GameManager.poop_count == 0:
+		GameManager.wellness+=wellness_gain_time
+		if GameManager.wellness > 100:
+			GameManager.wellness = 100
+	else:
+		GameManager.wellness-= GameManager.poop_count*5.0
+		if GameManager.wellness < 0:
+			GameManager.wellness = 0
 	main_hud.update_wellness(GameManager.wellness)
 
 func _on_tama_ill_treatment_finished():
@@ -160,3 +174,18 @@ func _on_happiness_ill_timer_timeout():
 	if GameManager.happiness < 0:
 		GameManager.happiness = 0
 	main_hud.update_happiness(GameManager.happiness)
+
+func _on_poop_timer_timeout():
+	poop_timer.set_wait_time(randi_range(1, 2))
+	poop_timer.start()
+	
+	var poop
+	poop = poop_scene.instantiate()
+	poop.position = tama.position
+	play_area.add_child(poop)
+	tama.explode_nearby()
+	
+	GameManager.poop_count += 1
+	
+	print(GameManager.poop_count)
+	print("spawn poop")

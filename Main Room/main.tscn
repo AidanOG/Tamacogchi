@@ -1,31 +1,38 @@
-[gd_scene load_steps=6 format=3 uid="uid://5ao4ydmxh3h3"]
+[gd_scene load_steps=7 format=3 uid="uid://5ao4ydmxh3h3"]
 
 [ext_resource type="Script" path="res://Main Room/main.gd" id="1_64npm"]
 [ext_resource type="PackedScene" uid="uid://neuyy7o3mjl2" path="res://Main Room/tama.tscn" id="1_ne2um"]
+[ext_resource type="PackedScene" uid="uid://c3bqxt2sxsiuo" path="res://Main Room/poop.tscn" id="2_fkymf"]
 [ext_resource type="PackedScene" uid="uid://b0pt7ldn1uaqa" path="res://Main Room/floor.tscn" id="2_v8jli"]
 [ext_resource type="PackedScene" uid="uid://b420pw2x7hdsc" path="res://Main Room/wall.tscn" id="3_2cpac"]
 [ext_resource type="PackedScene" uid="uid://dvvvgs86m0n5g" path="res://Main Room/hud.tscn" id="5_mfggl"]
 
-[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "happiness_timer", "energy_timer", "sleep_request_downtime", "hunger_timer", "wellness_timer", "happiness_ill_timer")]
+[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "play_area", "tama", "happiness_timer", "energy_timer", "sleep_request_downtime", "hunger_timer", "wellness_timer", "happiness_ill_timer", "poop_timer")]
 script = ExtResource("1_64npm")
 main_hud = NodePath("HUD")
+play_area = NodePath("PlayArea")
+tama = NodePath("PlayArea/Tama")
+poop_scene = ExtResource("2_fkymf")
 happiness_timer = NodePath("HappinessTimer")
 energy_timer = NodePath("EnergyTimer")
 sleep_request_downtime = NodePath("SleepRequestDowntime")
 hunger_timer = NodePath("HungerTimer")
 wellness_timer = NodePath("WellnessTimer")
 happiness_ill_timer = NodePath("HappinessIllTimer")
+poop_timer = NodePath("PoopTimer")
 
-[node name="Tama" parent="." instance=ExtResource("1_ne2um")]
+[node name="PlayArea" type="Node2D" parent="."]
+
+[node name="Tama" parent="PlayArea" instance=ExtResource("1_ne2um")]
 position = Vector2(576, 400)
 
-[node name="Floor" parent="." instance=ExtResource("2_v8jli")]
+[node name="Floor" parent="PlayArea" instance=ExtResource("2_v8jli")]
 position = Vector2(576, 713)
 
-[node name="Wall" parent="." instance=ExtResource("3_2cpac")]
+[node name="Wall" parent="PlayArea" instance=ExtResource("3_2cpac")]
 position = Vector2(-65, 324)
 
-[node name="Wall2" parent="." instance=ExtResource("3_2cpac")]
+[node name="Wall2" parent="PlayArea" instance=ExtResource("3_2cpac")]
 position = Vector2(1217, 324)
 
 [node name="HappinessTimer" type="Timer" parent="."]
@@ -42,21 +49,25 @@ position = Vector2(1217, 324)
 wait_time = 20.0
 one_shot = true
 
+[node name="PoopTimer" type="Timer" parent="."]
+one_shot = true
+
 [node name="HUD" parent="." instance=ExtResource("5_mfggl")]
 
-[connection signal="energy_low" from="." to="Tama" method="_on_main_energy_low"]
-[connection signal="happiness_zero" from="." to="Tama" method="_on_main_happiness_zero"]
+[connection signal="energy_low" from="." to="PlayArea/Tama" method="_on_main_energy_low"]
+[connection signal="happiness_zero" from="." to="PlayArea/Tama" method="_on_main_happiness_zero"]
 [connection signal="happiness_zero" from="." to="HUD" method="_on_main_happiness_zero"]
-[connection signal="ill" from="." to="Tama" method="_on_main_ill"]
-[connection signal="dropped" from="Tama" to="." method="_on_tama_dropped"]
-[connection signal="eat_finished" from="Tama" to="." method="_on_tama_eat_finished"]
-[connection signal="ill_treatment_finished" from="Tama" to="." method="_on_tama_ill_treatment_finished"]
-[connection signal="sleep_finished" from="Tama" to="." method="_on_tama_sleep_finished"]
-[connection signal="sleep_request_missed" from="Tama" to="." method="_on_tama_sleep_request_missed"]
-[connection signal="successful_pet" from="Tama" to="." method="_on_tama_successful_pet"]
+[connection signal="ill" from="." to="PlayArea/Tama" method="_on_main_ill"]
+[connection signal="dropped" from="PlayArea/Tama" to="." method="_on_tama_dropped"]
+[connection signal="eat_finished" from="PlayArea/Tama" to="." method="_on_tama_eat_finished"]
+[connection signal="ill_treatment_finished" from="PlayArea/Tama" to="." method="_on_tama_ill_treatment_finished"]
+[connection signal="sleep_finished" from="PlayArea/Tama" to="." method="_on_tama_sleep_finished"]
+[connection signal="sleep_request_missed" from="PlayArea/Tama" to="." method="_on_tama_sleep_request_missed"]
+[connection signal="successful_pet" from="PlayArea/Tama" to="." method="_on_tama_successful_pet"]
 [connection signal="timeout" from="HappinessTimer" to="." method="_on_happiness_timer_timeout"]
 [connection signal="timeout" from="EnergyTimer" to="." method="_on_energy_timer_timeout"]
 [connection signal="timeout" from="HungerTimer" to="." method="_on_hunger_timer_timeout"]
 [connection signal="timeout" from="WellnessTimer" to="." method="_on_wellness_timer_timeout"]
 [connection signal="timeout" from="HappinessIllTimer" to="." method="_on_happiness_ill_timer_timeout"]
-[connection signal="feed" from="HUD" to="Tama" method="_on_hud_feed"]
+[connection signal="timeout" from="PoopTimer" to="." method="_on_poop_timer_timeout"]
+[connection signal="feed" from="HUD" to="PlayArea/Tama" method="_on_hud_feed"]

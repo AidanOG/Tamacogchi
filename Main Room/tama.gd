@@ -1,8 +1,10 @@
 extends CharacterBody2D
+class_name Tama
 
 @export var speed = 100.0
 #var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var gravity = 15000
+@export var explosion_power = 50
 var direction
 var grabbed
 var falling
@@ -21,6 +23,9 @@ var game_over = false
 @export var sleep_request_timeout_timer: Timer
 @export var eat_timer: Timer
 @export var ill_treatment_timer: Timer
+@export var explode_area: Area2D
+@export var explode_area_shape: CollisionShape2D
+@export var explosion_dropoff_curve: Curve
 
 @export var sleep_request: Area2D
 @export var ill_request: Area2D
@@ -101,6 +106,18 @@ func _physics_process(delta):
 		if dizzy_timer.get_time_left() == 0:
 			idle_timer.start()
 			print("IdleTimer Started 2")
+
+func explode_nearby():
+	for body in explode_area.get_overlapping_bodies():
+		if body is RigidBody2D:
+			var direction = body.global_position - global_position
+			var total_dist = (explode_area_shape.shape as CircleShape2D).radius
+			var scale_factor = explosion_dropoff_curve.sample(global_position.distance_to(body.global_position) / total_dist)
+			
+			if direction.y > 0:
+				direction.y *= -1
+			
+			body.apply_impulse(direction * explosion_power * scale_factor)
 
 func _on_meander_timer_timeout():
 	idle_timer.set_wait_time(randf_range(2.0, 10.0))

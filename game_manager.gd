@@ -18,6 +18,10 @@ var hunger
 var wellness
 @export var wellness_start = 75.0
 
+var poop_count = 0
+
+var game_over = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

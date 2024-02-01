@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://c3bqxt2sxsiuo"]
+
+[ext_resource type="Script" path="res://Main Room/poop.gd" id="1_ehako"]
+[ext_resource type="Texture2D" uid="uid://35nys3gwgtqt" path="res://icon.svg" id="2_w8qgi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4w2yn"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xbcrv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_w8qgi")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_i55e1"]
+radius = 32.3883
+
+[node name="Poop" type="RigidBody2D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_ehako")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(3, 3)
+shape = SubResource("RectangleShape2D_4w2yn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+self_modulate = Color(0.560784, 0.301961, 0.184314, 1)
+z_index = -10
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_xbcrv")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(1.5, 1.5)
+shape = SubResource("CircleShape2D_i55e1")
+
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
