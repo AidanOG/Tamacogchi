@@ -1,5 +1,9 @@
 extends Node
 
+
+signal poop_count_changed
+
+
 var happiness
 @export var happiness_start = 80.0
 @export var happiness_gain_win_fruit_catch = 30.0
@@ -18,7 +22,14 @@ var hunger
 var wellness
 @export var wellness_start = 75.0
 
-var poop_count = 0
+var poop_count: int = 0 :
+	get:
+		return poop_count
+	set(value):
+		var old_value = poop_count
+		poop_count = value
+		if old_value != value:
+			poop_count_changed.emit()
 
 var game_over = false
 

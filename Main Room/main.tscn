@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://5ao4ydmxh3h3"]
+[gd_scene load_steps=10 format=3 uid="uid://5ao4ydmxh3h3"]
 
 [ext_resource type="Script" path="res://Main Room/main.gd" id="1_64npm"]
 [ext_resource type="PackedScene" uid="uid://neuyy7o3mjl2" path="res://Main Room/tama.tscn" id="1_ne2um"]
@@ -6,8 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://b0pt7ldn1uaqa" path="res://Main Room/floor.tscn" id="2_v8jli"]
 [ext_resource type="PackedScene" uid="uid://b420pw2x7hdsc" path="res://Main Room/wall.tscn" id="3_2cpac"]
 [ext_resource type="PackedScene" uid="uid://dvvvgs86m0n5g" path="res://Main Room/hud.tscn" id="5_mfggl"]
+[ext_resource type="AudioStream" uid="uid://bqtjucpanflgu" path="res://Main Room/sound/Common Fart.wav" id="7_f0yh2"]
+[ext_resource type="AudioStream" uid="uid://g0rei2jdojil" path="res://Main Room/sound/Creamy Fart.wav" id="8_jn1jb"]
+[ext_resource type="AudioStream" uid="uid://r1qc3kellrmh" path="res://Main Room/sound/Reverb Fart.wav" id="9_pptky"]
 
-[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "play_area", "tama", "happiness_timer", "energy_timer", "sleep_request_downtime", "hunger_timer", "wellness_timer", "happiness_ill_timer", "poop_timer")]
+[node name="Main" type="Node" node_paths=PackedStringArray("main_hud", "play_area", "tama", "happiness_timer", "energy_timer", "sleep_request_downtime", "hunger_timer", "wellness_timer", "happiness_ill_timer", "poop_timer", "common_fart", "creamy_fart", "reverb_fart")]
 script = ExtResource("1_64npm")
 main_hud = NodePath("HUD")
 play_area = NodePath("PlayArea")
@@ -20,6 +23,9 @@ hunger_timer = NodePath("HungerTimer")
 wellness_timer = NodePath("WellnessTimer")
 happiness_ill_timer = NodePath("HappinessIllTimer")
 poop_timer = NodePath("PoopTimer")
+common_fart = NodePath("CommonFart")
+creamy_fart = NodePath("CreamyFart")
+reverb_fart = NodePath("ReverbFart")
 
 [node name="PlayArea" type="Node2D" parent="."]
 
@@ -53,6 +59,15 @@ one_shot = true
 one_shot = true
 
 [node name="HUD" parent="." instance=ExtResource("5_mfggl")]
+
+[node name="CommonFart" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_f0yh2")
+
+[node name="CreamyFart" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_jn1jb")
+
+[node name="ReverbFart" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_pptky")
 
 [connection signal="energy_low" from="." to="PlayArea/Tama" method="_on_main_energy_low"]
 [connection signal="happiness_zero" from="." to="PlayArea/Tama" method="_on_main_happiness_zero"]

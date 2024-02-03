@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cbshkhu0yb"]
+
+[ext_resource type="Shader" uid="uid://h2w2ce0uxe4t" path="res://Main Room/materials/tama_shader.tres" id="1_04b0f"]
+
+[resource]
+shader = ExtResource("1_04b0f")
+shader_parameter/cutoff = 0.5
+shader_parameter/poop_color = Color(0.507813, 0.331764, 0.19043, 1)

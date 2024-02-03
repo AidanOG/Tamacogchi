@@ -7,6 +7,7 @@ extends Node
 @export var happiness_loss_drop = 20.0
 @export var happiness_gain_sleep = 10.0
 @export var happiness_loss_sleep_missed = 10.0
+@export var happiness_gain_feed = 10.0
 @export var happiness_gain_treatment = 10.0
 
 @export var happiness_loss_while_ill = 7.0
@@ -38,6 +39,9 @@ var ill_signal_emitted = false
 @export var wellness_timer: Timer
 @export var happiness_ill_timer: Timer
 @export var poop_timer: Timer
+@export var common_fart: AudioStreamPlayer
+@export var creamy_fart: AudioStreamPlayer
+@export var reverb_fart: AudioStreamPlayer
 
 signal happiness_zero
 signal energy_low
@@ -55,7 +59,7 @@ func _ready():
 	hunger_timer.start()
 	wellness_timer.start()
 	
-	poop_timer.set_wait_time(randi_range(1, 2))
+	poop_timer.set_wait_time(randi_range(30, 60))
 	poop_timer.start()
 	
 	main_hud.update_food(GameManager.food)
@@ -146,6 +150,15 @@ func _on_tama_eat_finished():
 		main_hud.update_wellness(GameManager.wellness)
 		GameManager.hunger = 100
 	main_hud.update_hunger(GameManager.hunger)
+	GameManager.happiness+=happiness_gain_feed
+	if GameManager.happiness >= 100:
+		GameManager.happiness = 100
+	main_hud.update_happiness(GameManager.happiness)
+	var poop_chance = randf_range(0, 1.0)
+	if poop_chance >= 0.7:
+		print("poopy incoming")
+		poop_timer.set_wait_time(1.0)
+		poop_timer.start()
 
 func _on_wellness_timer_timeout():
 	if GameManager.poop_count == 0:
@@ -176,7 +189,7 @@ func _on_happiness_ill_timer_timeout():
 	main_hud.update_happiness(GameManager.happiness)
 
 func _on_poop_timer_timeout():
-	poop_timer.set_wait_time(randi_range(1, 2))
+	poop_timer.set_wait_time(randi_range(30, 60))
 	poop_timer.start()
 	
 	var poop
@@ -189,3 +202,11 @@ func _on_poop_timer_timeout():
 	
 	print(GameManager.poop_count)
 	print("spawn poop")
+	
+	var poop_sound_weight = randf_range(0, 1.0)
+	if poop_sound_weight >= 0.95:
+		reverb_fart.play()
+	elif poop_sound_weight >= 0.75:
+		creamy_fart.play()
+	else:
+		common_fart.play()

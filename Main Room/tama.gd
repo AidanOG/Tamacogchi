@@ -31,6 +31,7 @@ var game_over = false
 @export var ill_request: Area2D
 
 @export var thunk_sound: AudioStreamPlayer
+@export var sprite: AnimatedSprite2D
 
 signal successful_pet
 signal dropped
@@ -51,10 +52,9 @@ func _ready():
 	requesting_ill = false
 	sleep_request.hide()
 	ill_request.hide()
+	GameManager.poop_count_changed.connect(_on_poop_count_changed)
+	_on_poop_count_changed()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
 
 func _physics_process(delta):
 	#print("on floor:", is_on_floor())
@@ -107,6 +107,14 @@ func _physics_process(delta):
 			idle_timer.start()
 			print("IdleTimer Started 2")
 
+
+func _on_poop_count_changed():
+	var max_poop_count = 5.0
+	var poop_percent = minf(float(GameManager.poop_count) / max_poop_count, 1.0)
+	var shader_material = sprite.material as ShaderMaterial
+	shader_material.set_shader_parameter("cutoff", poop_percent * 0.75)
+
+
 func explode_nearby():
 	for body in explode_area.get_overlapping_bodies():
 		if body is RigidBody2D:
@@ -118,6 +126,7 @@ func explode_nearby():
 				direction.y *= -1
 			
 			body.apply_impulse(direction * explosion_power * scale_factor)
+
 
 func _on_meander_timer_timeout():
 	idle_timer.set_wait_time(randf_range(2.0, 10.0))
