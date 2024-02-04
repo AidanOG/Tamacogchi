@@ -28,7 +28,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if(game_started == true):
-		fruit_catch_hud.update_time_remaining(ceil(game_timer.get_time_left()))
+		fruit_catch_hud.update_time_remaining(floor(game_timer.get_time_left()))
 
 func _on_fruit_catch_tama_hit():
 	fruit_timer.stop()
@@ -37,7 +37,7 @@ func _on_fruit_catch_tama_hit():
 		child.queue_free()
 	game_music.stop()
 	await get_tree().create_timer(1.0).timeout
-	final_food_gain = ceil(float(score)/20.0)
+	final_food_gain = floor(float(score)/20.0)
 	GameManager.food += final_food_gain
 	GameManager.happiness -= GameManager.happiness_loss_lose_fruit_catch
 	if GameManager.happiness < 0:
@@ -97,7 +97,7 @@ func _on_game_timer_timeout():
 	fruit_timer.stop()
 	game_music.stop()
 	await get_tree().create_timer(1.0).timeout
-	final_food_gain = ceil(float(score)/10.0)
+	final_food_gain = floor(float(score)/10.0)
 	GameManager.food += final_food_gain
 	GameManager.happiness += GameManager.happiness_gain_win_fruit_catch
 	if GameManager.happiness > 100:
