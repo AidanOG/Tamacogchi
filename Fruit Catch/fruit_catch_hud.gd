@@ -28,7 +28,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if(game_started == true):
-		ready_countdown_label.text = (str(ceil(ready_countdown_timer.get_time_left())))
+		ready_countdown_label.text = (str(floor(ready_countdown_timer.get_time_left())))
 
 func _on_start_button_pressed():
 	ready_countdown_label.show()
@@ -52,7 +52,7 @@ func update_score(score):
 
 func _on_game_timer_timeout():
 	await get_tree().create_timer(1.0).timeout
-	end_label.text = "Nice hustle! \nWe scored %d points! \nThat earns us %d food! Bon appétit! Well, for me, anyway." % [score_display, ceil(float(score_display)/10.0)]
+	end_label.text = "Nice hustle! \nWe scored %d points! \nThat earns us %d food! Bon appétit! Well, for me, anyway." % [score_display, floor(float(score_display)/10.0)]
 	end_label.show()
 	return_button.show()
 
@@ -61,6 +61,6 @@ func _on_return_button_pressed():
 
 func _on_fruit_catch_tama_hit():
 	await get_tree().create_timer(1.0).timeout
-	game_over_label.text = "Ouch... \nW-We scored %d points... \nBut I dropped some, so we only get %d food... \nCould've been worse, right?" % [score_display, ceil(float(score_display)/20.0)]
+	game_over_label.text = "Ouch... \nW-We scored %d points... \nBut I dropped some, so we only get %d food... \nCould've been worse, right?" % [score_display, floor(float(score_display)/20.0)]
 	game_over_label.show()
 	return_button.show()
