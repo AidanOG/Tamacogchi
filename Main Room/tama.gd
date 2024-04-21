@@ -141,7 +141,7 @@ func _on_idle_timer_timeout():
 	print("MeanderTimer Started")
 
 func _on_area_2d_mouse_entered():
-	if grabbed == false && is_on_floor() && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && ill_treatment_timer.get_time_left() == 0:
+	if grabbed == false && is_on_floor() && dizzy_timer.get_time_left() == 0 && sleep_timer.get_time_left() == 0 && eat_timer.get_time_left() == 0 && ill_treatment_timer.get_time_left() == 0 && requesting_ill == false:
 		idle_timer.stop()
 		meander_timer.stop()
 		pet_timer.start()
